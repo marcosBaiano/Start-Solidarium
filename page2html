@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Coleta - Quantidade de Resíduos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="page">
+        <header class="topbar">
+            <img src="assets/logo.png" alt="Logo da Empresa" class="logo" />
+        </header>
+        <main class="content">
+            <section class="center-box">
+                <h2 class="form-title">Quantidade de Resíduos</h2>
+                
+                <div class="form-group">
+                    <label>Informe a quantidade de resíduos</label>
+                    <input type="number" placeholder="Quantidade em KG" />
+                </div>
+                <button class="btn" onclick="window.location.href='page-3.html'">Confirmar</button>
+            </section>
+        </main>
+        <div class="button-group" style="margin-top: 20px;">
+            <button class="btn-secondary" onclick="window.location.href='page.html'">Voltar</button>
+        </div>
+    </div>
+</body>
+</html>
