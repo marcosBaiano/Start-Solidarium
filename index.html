@@ -3,38 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Coleta de Resíduos - Cadastro</title>
+    <title>Sistema de Coleta de Resíduos</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .page { display: none; }
+        .page.active { display: block; }
+    </style>
 </head>
 <body>
-    <div class="page">
+    <div class="page active" id="cadastro">
+        <!-- ========== HEADER/TOPBAR ========== -->
         <header class="topbar">
             <img src="assets/logo.png" alt="Logo da Empresa" class="logo" />
         </header>
+
+        <!-- ========== SEÇÃO DE CADASTRO ========== -->
         <main class="content">
             <section class="form-box">
                 <h1 class="form-title">Se cadastre aqui</h1>
 
-                <form action="back/criarSolicitacao.php" method="POST">
-                    <div class="form-group">
-                        <label>Tipo de residência</label>
-                        <input type="text" name="tipo_residencia" placeholder="Casa, apartamento..." required />
-                    </div>
+                <div class="form-group">
+                    <label>Tipo de residência</label>
+                    <input type="text" placeholder="Casa, apartamento..." />
+                </div>
 
-                    <div class="form-group">
-                        <label>Informe seu CEP</label>
-                        <input type="text" name="cep" placeholder="00000-000" required />
-                    </div>
+                <div class="form-group">
+                    <label>Informe seu CEP</label>
+                    <input type="text" placeholder="00000-000" />
+                </div>
 
-                    <div class="form-group">
-                        <label>Nome</label>
-                        <input type="text" name="nome" placeholder="Seu nome" required />
-                    </div>
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" placeholder="Seu nome" />
+                </div>
 
-                    <button type="submit" class="btn">Cadastrar-se</button>
-                </form>
+                <button class="btn" onclick="showSection('mapa')">Cadastrar-se</button>
             </section>
         </main>
     </div>
+
+    <div class="page" id="mapa">
+        <header class="topbar">
+            <img src="assets/logo.png" alt="Logo da Empresa" class="logo" />
+        </header>
+        <main class="content">
+            <section class="map-section">
+                <div id="map"></div>
+            </section>
+            <div class="button-group">
+                <button class="btn" onclick="showSection('quantidade')">Próximo</button>
+                <button class="btn-secondary" onclick="showSection('cadastro')">Voltar</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        var map = L.map('map').setView([-3.7319, -38.5267], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        L.marker([-3.7319, -38.5267]).addTo(map)
+            .bindPopup('Você está aqui!')
+            .openPopup();
+    </script>
+
+    <div class="page" id="quantidade">
+        <header class="topbar">
+            <img src="assets/logo.png" alt="Logo da Empresa" class="logo" />
+        </header>
+
+        <main class="content">
+            <section class="center-box">
+                <h2 class="form-title">Quantidade de Resíduos</h2>
+                
+                <div class="form-group">
+                    <label>Informe a quantidade de resíduos</label>
+                    <input type="number" placeholder="Quantidade em KG" />
+                </div>
+
+                <button class="btn" onclick="showSection('confirmacao')">Confirmar</button>
+            </section>
+        </main>
+
+        <div class="button-group" style="margin-top: 20px;">
+            <button class="btn-secondary" onclick="showSection('mapa')">Voltar</button>
+        </div>
+    </div>
+
+    <div class="page" id="confirmacao">
+        <header class="topbar">
+            <img src="assets/logo.png" alt="Logo da Empresa" class="logo" />
+        </header>
+
+        <main class="content">
+            <section class="center-box">
+                <h2 class="form-title">Coleta Agendada com Sucesso!</h2>
+                
+                <div class="confirmation-box">
+                    <p>Sua coleta foi agendada com sucesso.</p>
+                    <p>Um coletor passará em sua residência em breve.</p>
+                </div>
+
+                <button class="btn" onclick="showSection('cadastro')">Fazer Nova Coleta</button>
+            </section>
+        </main>
+
+        <div class="button-group" style="margin-top: 20px;">
+            <button class="btn-secondary" onclick="showSection('quantidade')">Voltar</button>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            const targetPage = document.getElementById(sectionId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>
