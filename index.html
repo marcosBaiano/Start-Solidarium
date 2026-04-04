@@ -15,22 +15,24 @@
             <section class="form-box">
                 <h1 class="form-title">Se cadastre aqui</h1>
 
-                <div class="form-group">
-                    <label>Tipo de residência</label>
-                    <input type="text" placeholder="Casa, apartamento..." />
-                </div>
+                <form action="back/criarSolicitacao.php" method="POST">
+                    <div class="form-group">
+                        <label>Tipo de residência</label>
+                        <input type="text" name="tipo_residencia" placeholder="Casa, apartamento..." required />
+                    </div>
 
-                <div class="form-group">
-                    <label>Informe seu CEP</label>
-                    <input type="text" placeholder="00000-000" />
-                </div>
+                    <div class="form-group">
+                        <label>Informe seu CEP</label>
+                        <input type="text" name="cep" placeholder="00000-000" required />
+                    </div>
 
-                <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" placeholder="Seu nome" />
-                </div>
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" name="nome" placeholder="Seu nome" required />
+                    </div>
 
-                <button class="btn" onclick="window.location.href='page.html'">Cadastrar-se</button>
+                    <button type="submit" class="btn">Cadastrar-se</button>
+                </form>
             </section>
         </main>
     </div>

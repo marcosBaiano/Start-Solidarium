@@ -15,11 +15,13 @@
             <section class="center-box">
                 <h2 class="form-title">Quantidade de Resíduos</h2>
                 
-                <div class="form-group">
-                    <label>Informe a quantidade de resíduos</label>
-                    <input type="number" placeholder="Quantidade em KG" />
-                </div>
-                <button class="btn" onclick="window.location.href='page-3.html'">Confirmar</button>
+                <form action="back/criarSolicitacao.php" method="POST">
+                    <div class="form-group">
+                        <label>Informe a quantidade de resíduos</label>
+                        <input type="number" name="quantidade_residuos" placeholder="Quantidade em KG" required />
+                    </div>
+                    <button type="submit" class="btn">Confirmar</button>
+                </form>
             </section>
         </main>
         <div class="button-group" style="margin-top: 20px;">
