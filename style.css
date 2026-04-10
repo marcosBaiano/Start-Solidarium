@@ -106,7 +106,11 @@ body {
 
 .button-group .btn-secondary {
   margin-top: 0;
-};
+}
+
+.btn-secondary.btn-small {
+  width: auto;
+}
 
 .btn-small {
   width: auto;
@@ -114,17 +118,19 @@ body {
   height: 28px;
   font-size: 11px;
   margin-left: 8px;
-};
+}
 
 .cep-row {
   display: flex;
   gap: 8px;
   align-items: center;
-};
+  flex-wrap: nowrap;
+}
 
 .cep-row input {
   flex: 1;
-};
+  min-width: 0;
+}
 
 .field-note {
   margin-top: 8px;
@@ -141,26 +147,32 @@ body {
 };
 
 .checkbox-group {
-  padding: 12px 14px;
-  background: #fafafc;
-  border: 1px solid #dde0dd;
-  border-radius: 6px;
-};
+  width: 100%;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1px solid #4d6f2f;
+  border-radius: 8px;
+}
 
 .checkbox-group label {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 12px;
-  font-size: 13px;
+  width: 100%;
+  font-size: 12px;
+  font-weight: 700;
   color: #222;
+  text-transform: uppercase;
   line-height: 1.2;
-};
+  cursor: pointer;
+}
 
 .checkbox-group input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   margin: 0;
-};
+}
 
 .btn-secondary:hover {
   background: #f1f4f6;
