@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -14,10 +14,12 @@
 </head>
 <body>
     <div class="page active" id="cadastro">
+        <!-- ========== HEADER/TOPBAR ========== -->
         <header class="topbar">
             <img src="assets/logo.png" alt="Logo da Empresa" class="logo" />
         </header>
 
+        <!-- ========== SEÇÃO DE CADASTRO ========== -->
         <main class="content">
             <section class="form-box">
                 <h1 class="form-title">Se cadastre aqui</h1>
@@ -28,8 +30,17 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Número</label>
+                    <input id="numeroInput" type="number" placeholder="Número" min="0" step="1" inputmode="numeric" />
+                </div>
+
+                <div class="form-group cep-group">
                     <label>Informe seu CEP</label>
-                    <input type="text" placeholder="00000-000" />
+                    <div class="cep-row">
+                        <input id="cepInput" type="text" placeholder="00000-000" />
+                        <button type="button" class="btn-secondary btn-small" onclick="geocodeCep()">Buscar CEP</button>
+                    </div>
+                    <p id="cepStatus" class="field-note">Use o CEP para localizar seu endereço no mapa.</p>
                 </div>
 
                 <div class="form-group">
@@ -57,23 +68,6 @@
         </main>
     </div>
 
-    <script>
-        var map;
-
-        function initMap() {
-            map = L.map('map').setView([-3.7319, -38.5267], 13);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
-                maxZoom: 19
-            }).addTo(map);
-
-            L.marker([-3.7319, -38.5267]).addTo(map)
-                .bindPopup('Você está aqui!')
-                .openPopup();
-        }
-    </script>
-
     <div class="page" id="quantidade">
         <header class="topbar">
             <img src="assets/logo.png" alt="Logo da Empresa" class="logo" />
@@ -85,7 +79,14 @@
                 
                 <div class="form-group">
                     <label>Informe a quantidade de resíduos</label>
-                    <input type="number" placeholder="Quantidade em KG" />
+                    <input id="quantityInput" type="number" placeholder="Quantidade em KG" />
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input id="unknownQuantity" type="checkbox" onchange="toggleQuantity()" />
+                        Não sei a quantidade
+                    </label>
                 </div>
 
                 <button class="btn" onclick="showSection('confirmacao')">Confirmar</button>
@@ -109,6 +110,10 @@
                 <div class="confirmation-box">
                     <p>Sua coleta foi agendada com sucesso.</p>
                     <p>Um coletor passará em sua residência em breve.</p>
+                    <div class="tracking-code-box">
+                        <span class="tracking-label">Código de acompanhamento:</span>
+                        <span id="trackingCode">Aguardando código do back-end</span>
+                    </div>
                 </div>
 
                 <button class="btn" onclick="showSection('cadastro')">Fazer Nova Coleta</button>
@@ -121,6 +126,81 @@
     </div>
 
     <script>
+        let map;
+        let selectedLocation = null;
+        let searchMarker = null;
+
+        async function geocodeCep() {
+            const cepInput = document.getElementById('cepInput');
+            const cepStatus = document.getElementById('cepStatus');
+            const cep = cepInput.value.trim();
+
+            if (!cep) {
+                cepStatus.textContent = 'Digite um CEP válido para localizar.';
+                cepStatus.classList.add('field-note-error');
+                return;
+            }
+
+            cepStatus.textContent = 'Buscando endereço...';
+            cepStatus.classList.remove('field-note-error');
+
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=0&limit=1&countrycodes=br&q=${encodeURIComponent(cep + ' Brasil')}`);
+                const results = await response.json();
+
+                if (results && results.length > 0) {
+                    const location = results[0];
+                    const addressLabel = location.display_name
+                        .split(',')
+                        .slice(0, 3)
+                        .join(', ');
+
+                    selectedLocation = {
+                        lat: parseFloat(location.lat),
+                        lon: parseFloat(location.lon),
+                        displayName: addressLabel
+                    };
+
+                    cepStatus.textContent = `CEP encontrado: ${selectedLocation.displayName}`;
+                    cepStatus.classList.remove('field-note-error');
+                    cepStatus.classList.add('field-note-success');
+                } else {
+                    selectedLocation = null;
+                    cepStatus.textContent = 'Não foi possível localizar o CEP. Confira os números e tente novamente.';
+                    cepStatus.classList.add('field-note-error');
+                }
+            } catch (error) {
+                selectedLocation = null;
+                cepStatus.textContent = 'Erro ao buscar CEP. Tente novamente mais tarde.';
+                cepStatus.classList.add('field-note-error');
+            }
+        }
+
+        function initMap() {
+            map = L.map('map').setView([-3.7319, -38.5267], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            if (selectedLocation) {
+                updateMapMarker([selectedLocation.lat, selectedLocation.lon], 'Localização definida pelo CEP');
+            } else {
+                updateMapMarker([-3.7319, -38.5267], 'Você está aqui!');
+            }
+        }
+
+        function updateMapMarker(latlng, text) {
+            if (searchMarker) {
+                map.removeLayer(searchMarker);
+            }
+
+            searchMarker = L.marker(latlng).addTo(map)
+                .bindPopup(text)
+                .openPopup();
+        }
+
         function showSection(sectionId) {
             const pages = document.querySelectorAll('.page');
             pages.forEach(page => page.classList.remove('active'));
@@ -136,8 +216,27 @@
                         initMap();
                     } else {
                         map.invalidateSize();
+                        if (selectedLocation) {
+                            map.setView([selectedLocation.lat, selectedLocation.lon], 15);
+                            updateMapMarker([selectedLocation.lat, selectedLocation.lon], 'Localização definida pelo CEP');
+                        } else {
+                            map.setView([-3.7319, -38.5267], 13);
+                        }
                     }
                 }, 200);
+            }
+        }
+
+        function toggleQuantity() {
+            const quantityInput = document.getElementById('quantityInput');
+            const unknownCheckbox = document.getElementById('unknownQuantity');
+            quantityInput.disabled = unknownCheckbox.checked;
+
+            if (unknownCheckbox.checked) {
+                quantityInput.value = '';
+                quantityInput.placeholder = 'Quantidade não informada';
+            } else {
+                quantityInput.placeholder = 'Quantidade em KG';
             }
         }
     </script>
