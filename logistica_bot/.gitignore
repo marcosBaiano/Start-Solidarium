@@ -1,0 +1,20 @@
+# Ambiente Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+
+# Configurações sensíveis
+.env
+
+# Logs
+logs/*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
